@@ -1,19 +1,19 @@
-const MoodLog = require('../models/moodLog.js');
+const MoodLog = require("../models/moodLog.js");
 
 exports.createMoodLog = async (req, res) => {
-  const { role, userId, mood, notes, sleepHours, energyLevel } = req.body;
+  const { mood, notes, sleepHours, energyLevel } = req.body;
 
-  if (role !== 'patient') {
-    return res.status(403).json({ error: 'Only patients can create mood logs.' });
+  if (req.user.role !== "user") {
+    return res.status(403).json({ error: "Only users can create mood logs." });
   }
 
   try {
     const newLog = new MoodLog({
-      userId,
+      userId: req.user.id,
       mood,
       notes,
       sleepHours,
-      energyLevel
+      energyLevel,
     });
 
     const savedLog = await newLog.save();
@@ -24,10 +24,10 @@ exports.createMoodLog = async (req, res) => {
 };
 
 exports.getPatientMoodLogs = async (req, res) => {
-  const { role } = req.query;
-
-  if (role !== 'therapist') {
-    return res.status(403).json({ error: 'Only therapists can view patient mood logs.' });
+  if (req.user.role !== "therapist") {
+    return res
+      .status(403)
+      .json({ error: "Only therapists can view patient mood logs." });
   }
 
   try {
