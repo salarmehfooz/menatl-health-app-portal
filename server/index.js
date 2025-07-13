@@ -8,6 +8,7 @@ const userRoutes = require("./routes/userRoute.js");
 const therapistRoutes = require("./routes/therapistRoutes.js");
 const moodLogRoutes = require("./routes/moodLogRoutes.js");
 const contentRoutes = require("./routes/contentRoute.js");
+const appointmentRoutes = require("./routes/appointmentRoutes.js");
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/therapist", therapistRoutes);
 app.use("/api/moodlogs", moodLogRoutes);
 app.use("/api/contents", contentRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
