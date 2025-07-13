@@ -71,7 +71,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen gradient-bg flex">
       {/* Left Side - Marketing Content */}
-      <div className="hidden lg:flex lg:w-1/2 p-12 flex-col justify-center">
+      <div className="hidden lg:flex lg:w-1/2 p-12 flex-col justify-start pt-16">
         <div className="max-w-md">
           {/* Logo */}
           <div className="flex items-center mb-12">
