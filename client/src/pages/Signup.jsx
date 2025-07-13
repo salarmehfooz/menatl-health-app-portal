@@ -104,7 +104,7 @@ const Signup = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-800 mb-1">Expert Support</h3>
-                <p className="text-gray-600 text-sm">Connect with licensed therapists and counselors who understand your unique journey.</p>
+                <p className="text-gray-600 text-sm">Connect with therapists and counselors who understand your unique journey.</p>
               </div>
             </div>
 

@@ -4,6 +4,7 @@
   * {
     border-color: #e5e7eb;
   }
+
   body {
     background-color: #ffffff;
     color: #111827;
@@ -26,20 +27,33 @@
     padding: 0.75rem 1rem;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
-    transition: all 0.2s;
+    transition: all 0.2s ease-in-out;
     background-color: #f9fafb;
     color: #111827;
+    outline: none;
+  }
+
+  .auth-input:hover {
+    border-color: #9ca3af;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   }
 
   .auth-input:focus {
     outline: none;
-    ring: 2px solid #6366f1;
-    border-color: transparent;
+    border-color: #6366f1;
     background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
   }
 
   .auth-input::placeholder {
     color: #6b7280;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .auth-input:focus::placeholder {
+    color: #9ca3af;
   }
 
   .auth-button {
@@ -97,6 +111,40 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+  }
+
+  /* Enhanced select dropdown styling */
+  select.auth-input {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  select.auth-input:hover {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%234b5563' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  }
+
+  select.auth-input:focus {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236366f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  }
+
+  /* Enhanced checkbox styling */
+  input[type="checkbox"] {
+    transition: all 0.2s ease-in-out;
+  }
+
+  input[type="checkbox"]:hover {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  input[type="checkbox"]:focus {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
 }
 
