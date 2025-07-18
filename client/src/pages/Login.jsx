@@ -1,158 +1,155 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { Heart, Shield, Users, Sparkles, Eye, EyeOff } from "lucide-react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { login } from "../redux/authSlice";
+import { Eye, EyeOff, Heart, Lock, Mail, AlertCircle } from "lucide-react";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
 
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    const result = await login(email, password);
+    if (!validateForm()) return;
 
-    if (result.success) {
+    try {
+      await dispatch(login(formData)).unwrap();
       navigate("/dashboard");
-    } else {
-      setError(result.error || "Login failed");
+    } catch (error) {
+      console.error("Login failed:", error);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen gradient-bg flex">
-      {/* Left Side - Marketing Content */}
-      <div className="hidden lg:flex lg:w-1/2 p-12 flex-col justify-center">
-        <div className="max-w-md">
-          {/* Logo */}
-          <div className="flex items-center mb-12">
-            <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-3">
-              <Heart className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-gray-800">MindEase</span>
-          </div>
-
-          {/* Main Heading */}
-          <h1 className="text-4xl font-bold text-gray-800 mb-6 leading-tight">Your journey to better mental health starts here</h1>
-
-          <p className="text-gray-600 mb-12 text-lg leading-relaxed">Join thousands who have found peace, support, and growth through our compassionate community and expert-guided resources.</p>
-
-          {/* Features */}
-          <div className="space-y-6">
-            <div className="feature-card">
-              <div className="feature-icon bg-blue-100">
-                <Shield className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-1">Safe & Confidential</h3>
-                <p className="text-gray-600 text-sm">Your privacy and security are our top priorities. All conversations are encrypted and protected.</p>
-              </div>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon bg-purple-100">
-                <Users className="w-5 h-5 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-1">Expert Support</h3>
-                <p className="text-gray-600 text-sm">Connect with therapists and counselors who understand your unique journey.</p>
-              </div>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon bg-green-100">
-                <Sparkles className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-1">Personalized Care</h3>
-                <p className="text-gray-600 text-sm">Tailored resources and tools designed specifically for your mental health goals.</p>
-              </div>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="flex justify-center mb-6">
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-lg">
+              <Heart className="h-10 w-10 text-white" />
             </div>
           </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
+          <p className="text-gray-600">Sign in to continue your mental health journey</p>
         </div>
-      </div>
 
-      {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center mb-8">
-            <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-3">
-              <Heart className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-gray-800">MindEase</span>
+        {/* Error Alert */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
+            <AlertCircle className="h-5 w-5 text-red-500 mr-3" />
+            <span className="text-red-700">{error}</span>
           </div>
+        )}
 
-          {/* Card Container */}
-          <div className="auth-card">
-            {/* Form Header */}
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome</h2>
-              <p className="text-gray-600">Take the first step towards better mental wellness</p>
-            </div>
-
-            {/* Tab Navigation */}
-            <div className="flex bg-gray-100 rounded-lg p-1 mb-8">
-              <div className="flex-1 text-center py-2 bg-white rounded-md shadow-sm">
-                <span className="text-sm font-medium text-gray-900">Sign In</span>
-              </div>
-              <Link to="/signup" className="flex-1 text-center py-2">
-                <span className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">Sign Up</span>
-              </Link>
-            </div>
-
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">{error}</div>}
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="auth-input" placeholder="your.email@example.com" required />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                <div className="relative">
-                  <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="auth-input pr-12" placeholder="Enter your password" required />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
+        {/* Form */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-5">
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
                 </div>
+                <input id="email" name="email" type="email" value={formData.email} onChange={handleChange} className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.email ? "border-red-300 bg-red-50" : "border-gray-300"}`} placeholder="Enter your email" />
               </div>
+              {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
+            </div>
 
-              <div className="flex items-center justify-between">
-                <label className="flex items-center">
-                  <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
-                <Link to="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500 transition-colors">
-                  Forgot password?
-                </Link>
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input id="password" name="password" type={showPassword ? "text" : "password"} value={formData.password} onChange={handleChange} className={`block w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.password ? "border-red-300 bg-red-50" : "border-gray-300"}`} placeholder="Enter your password" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  {showPassword ? <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" /> : <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" />}
+                </button>
               </div>
-
-              <button type="submit" disabled={loading} className="auth-button">
-                {loading ? "Signing In..." : "Sign In to Your Journey"}
-              </button>
-            </form>
-          </div>
-
-          {/* Support Message - Outside the card */}
-          <div className="mt-6 text-center">
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-              <p className="text-sm text-blue-700">💙 You're taking a brave step towards better mental health. We're here to support you every step of the way.</p>
+              {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password}</p>}
             </div>
           </div>
+
+          {/* Submit Button */}
+          <button type="submit" disabled={loading} className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl">
+            {loading ? (
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Signing in...
+              </div>
+            ) : (
+              "Sign in"
+            )}
+          </button>
+
+          {/* Register Link */}
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{" "}
+              <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                Sign up here
+              </Link>
+            </p>
+          </div>
+        </form>
+
+        {/* Support */}
+        <div className="text-center pt-6 border-t border-gray-200">
+          <p className="text-sm text-gray-500">
+            Need help?{" "}
+            <a href="mailto:support@mindcare.com" className="text-blue-600 hover:text-blue-500 transition-colors duration-200">
+              Contact support
+            </a>
+          </p>
         </div>
       </div>
     </div>

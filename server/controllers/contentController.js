@@ -1,10 +1,11 @@
-const Content = require("../models/content.js");
+import Content from "../models/content.js";
 
-exports.createContent = async (req, res) => {
-  if (req.user.role !== "therapist") {
+// Create content (Therapist or Admin)
+export const createContent = async (req, res) => {
+  if (!["therapist", "admin"].includes(req.user.role)) {
     return res
       .status(403)
-      .json({ error: "Only therapists can create content." });
+      .json({ error: "Only therapists or admins can create content." });
   }
 
   try {
@@ -14,11 +15,12 @@ exports.createContent = async (req, res) => {
     });
     res.status(201).json(content);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
-exports.getAllContent = async (req, res) => {
+// Get all content (All roles)
+export const getAllContent = async (req, res) => {
   try {
     const content = await Content.find().sort({ createdAt: -1 });
     res.json(content);
@@ -27,41 +29,39 @@ exports.getAllContent = async (req, res) => {
   }
 };
 
-exports.getContentById = async (req, res) => {
+// Update content (Therapist or Admin)
+export const updateContent = async (req, res) => {
+  if (!["therapist", "admin"].includes(req.user.role)) {
+    return res
+      .status(403)
+      .json({ error: "Only therapists or admins can update content." });
+  }
+
   try {
-    const content = await Content.findById(req.params.id);
-    if (!content) return res.status(404).json({ error: "Content not found" });
-    res.json(content);
+    const updated = await Content.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updated) return res.status(404).json({ error: "Content not found" });
+
+    res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.updateContent = async (req, res) => {
-  if (req.user.role !== "therapist") {
-    return res.status(403).json({ error: "Only therapists can edit content." });
-  }
-
-  try {
-    const content = await Content.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    res.json(content);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-exports.deleteContent = async (req, res) => {
-  if (req.user.role !== "therapist") {
+// Delete content (Therapist or Admin)
+export const deleteContent = async (req, res) => {
+  if (!["therapist", "admin"].includes(req.user.role)) {
     return res
       .status(403)
-      .json({ error: "Only therapists can delete content." });
+      .json({ error: "Only therapists or admins can delete content." });
   }
 
   try {
-    await Content.findByIdAndDelete(req.params.id);
-    res.json({ msg: "Content deleted successfully" });
+    const deleted = await Content.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Content not found" });
+
+    res.json({ message: "Content deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

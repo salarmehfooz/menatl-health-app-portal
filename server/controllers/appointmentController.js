@@ -1,25 +1,13 @@
-import { Appointment } from "../models/appointmentModel.js";
-import User from "../models/user.js";
+import Appointment from "../models/appointmentModel.js";
 
-// Create Appointment (User only)
+// Book Appointment (User only)
 export const bookAppointment = async (req, res) => {
+  if (req.user.role !== "user") {
+    return res.status(403).json({ error: "Only users can book appointments." });
+  }
+
   try {
-    if (req.user.role !== "user") {
-      return res
-        .status(403)
-        .json({ error: "Only users can book appointments." });
-    }
-
     const { therapistId, datetime, notes } = req.body;
-
-    const therapist = await User.findOne({
-      _id: therapistId,
-      role: "therapist",
-    });
-    if (!therapist) {
-      return res.status(400).json({ error: "Invalid therapist ID." });
-    }
-
     const newAppointment = new Appointment({
       userId: req.user.id,
       therapistId,
@@ -36,97 +24,89 @@ export const bookAppointment = async (req, res) => {
   }
 };
 
-// Get All Appointments for Therapist
+// Therapist/Admin views appointments by therapistId
 export const getAppointmentsForTherapist = async (req, res) => {
-  try {
-    if (req.user.role !== "therapist") {
-      return res
-        .status(403)
-        .json({ error: "Only therapists can view appointments." });
-    }
+  if (!["therapist", "admin"].includes(req.user.role)) {
+    return res.status(403).json({ error: "Access denied" });
+  }
 
-    const appointments = await Appointment.find({
-      therapistId: req.user.id,
-    }).populate("userId", "username email");
+  try {
+    const therapistId = req.params.therapistId;
+    const appointments = await Appointment.find({ therapistId });
     res.status(200).json(appointments);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Therapist Updates Appointment (e.g., reschedule or cancel)
-export const updateAppointment = async (req, res) => {
-  try {
-    if (req.user.role !== "therapist") {
-      return res
-        .status(403)
-        .json({ error: "Only therapists can update appointments." });
-    }
+// User/Admin views own appointments
+export const getAppointmentsForUser = async (req, res) => {
+  if (req.user.role !== "user" && req.user.role !== "admin") {
+    return res.status(403).json({ error: "Access denied" });
+  }
 
+  try {
+    const userId = req.user.role === "admin" ? req.params.userId : req.user.id;
+    const appointments = await Appointment.find({ userId });
+    res.status(200).json(appointments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Therapist/Admin Updates Appointment
+export const updateAppointment = async (req, res) => {
+  if (!["therapist", "admin"].includes(req.user.role)) {
+    return res
+      .status(403)
+      .json({ error: "Only therapists or admins can update appointments." });
+  }
+
+  try {
     const { id } = req.params;
     const { datetime, status, notes } = req.body;
 
-    const appointment = await Appointment.findById(id);
-    if (!appointment) {
-      return res.status(404).json({ error: "Appointment not found." });
-    }
+    const updated = await Appointment.findByIdAndUpdate(
+      id,
+      { datetime, status, notes },
+      { new: true }
+    );
 
-    // Ensure therapist owns the appointment
-    if (appointment.therapistId.toString() !== req.user.id) {
-      return res
-        .status(403)
-        .json({ error: "You are not allowed to edit this appointment." });
-    }
+    if (!updated)
+      return res.status(404).json({ error: "Appointment not found" });
 
-    appointment.datetime = datetime || appointment.datetime;
-    appointment.status = status || appointment.status;
-    appointment.notes = notes || appointment.notes;
-
-    const updated = await appointment.save();
     res.status(200).json({ message: "Appointment updated", updated });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// View Appointment Status (Accessible to all authenticated users)
+// View Appointment Status (All roles)
 export const getAppointmentStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const appointment = await Appointment.findById(id);
 
-    if (!appointment) {
-      return res.status(404).json({ error: "Appointment not found." });
-    }
-
-    // Only involved user or therapist can access
-    if (
-      req.user.id !== appointment.userId.toString() &&
-      req.user.id !== appointment.therapistId.toString()
-    ) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to view this appointment." });
-    }
+    if (!appointment)
+      return res.status(404).json({ error: "Appointment not found" });
 
     res.status(200).json({ status: appointment.status });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+// Admin views all appointments (for Admin role)
+export const getAllAppointmentsForAdmin = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ error: "Access denied" });
+  }
 
-// Get Appointments for Logged-in User
-export const getUserAppointments = async (req, res) => {
   try {
-    if (req.user.role !== "user") {
-      return res
-        .status(403)
-        .json({ error: "Only users can view their appointments." });
-    }
+    // Fetching all appointments for the admin
+    const appointments = await Appointment.find()
+      .populate("userId", "username email")
+      .populate("therapistId", "username email");
 
-    const appointments = await Appointment.find({
-      userId: req.user.id,
-    }).populate("therapistId", "username email");
     res.status(200).json(appointments);
   } catch (err) {
     res.status(500).json({ error: err.message });

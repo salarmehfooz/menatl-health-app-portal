@@ -1,8 +1,9 @@
-const express = require("express");
+import express from "express";
+import { protect, requireRole } from "../controllers/authController.js";
+import { getAllUsers } from "../controllers/therapistController.js";
+
 const router = express.Router();
-const { protect, requireRole } = require("../controllers/authController.js");
-const { getAllUsers } = require("../controllers/therapistController.js");
 
 router.get("/users", protect, requireRole("therapist"), getAllUsers);
 
-module.exports = router;
+export default router;

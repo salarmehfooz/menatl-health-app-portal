@@ -1,30 +1,36 @@
 import express from "express";
+import { protect, requireRole } from "../controllers/authController.js";
 import {
   bookAppointment,
   getAppointmentsForTherapist,
+  getAppointmentsForUser,
   updateAppointment,
   getAppointmentStatus,
-  getUserAppointments,
+  getAllAppointmentsForAdmin,
 } from "../controllers/appointmentController.js";
-
-import { protect, requireRole } from "../controllers/authController.js";
 
 const router = express.Router();
 
-// Users
 router.post("/", protect, requireRole("user"), bookAppointment);
-router.get("/my", protect, requireRole("user"), getUserAppointments);
-
-// Therapists
+router.get("/me/:id", protect, getAppointmentsForUser);
 router.get(
-  "/therapist",
+  "/therapist/:id",
   protect,
   requireRole("therapist"),
   getAppointmentsForTherapist
 );
-router.put("/:id", protect, requireRole("therapist"), updateAppointment);
-
-// Public (optional: or protect if needed)
+router.get(
+  "/admin/all",
+  protect,
+  requireRole("admin"),
+  getAllAppointmentsForAdmin
+);
+router.put(
+  "/:id",
+  protect,
+  requireRole("therapist", "admin"),
+  updateAppointment
+);
 router.get("/:id/status", protect, getAppointmentStatus);
 
-module.exports = router;
+export default router;

@@ -1,17 +1,47 @@
-const express = require("express");
+import express from "express";
+import { protect, requireRole } from "../controllers/authController.js";
+import {
+  createMoodLog,
+  getMyMoodLogs,
+  getPatientMoodLogs,
+  getTherapistClientsMoodLogs,
+  getAllMoodLogs,
+  deleteMoodLog,
+} from "../controllers/moodLogController.js";
+
 const router = express.Router();
-const { protect, requireRole } = require("../controllers/authController.js");
-const moodLogController = require("../controllers/moodLogController.js");
 
-// Patient creates mood log
-router.post("/", protect, requireRole("user"), moodLogController.createMoodLog);
+// 🟢 User creates a mood log
+router.post("/", protect, requireRole("user"), createMoodLog);
 
-// Therapist views mood logs of a patient
+// 🟢 User views their own mood logs
+router.get("/me", protect, requireRole("user"), getMyMoodLogs);
+
+// 🟢 Therapist views logs of all their assigned clients
 router.get(
-  "/patient/:patientId",
+  "/therapist-clients",
   protect,
   requireRole("therapist"),
-  moodLogController.getPatientMoodLogs
+  getTherapistClientsMoodLogs
 );
 
-module.exports = router;
+// 🟢 Therapist or Admin views a specific patient's mood logs
+router.get(
+  "/patient/:id",
+  protect,
+  requireRole("therapist", "admin"),
+  getPatientMoodLogs
+);
+
+// 🟢 Admin views all mood logs
+router.get("/admin/all", protect, requireRole("admin"), getAllMoodLogs);
+
+// 🟢 Therapist or Admin deletes a mood log
+router.delete(
+  "/:id",
+  protect,
+  requireRole("therapist", "admin"),
+  deleteMoodLog
+);
+
+export default router;

@@ -1,11 +1,13 @@
-const MoodLog = require("../models/moodLog.js");
+import MoodLog from "../models/moodLog.js";
+import User from "../models/user.js";
 
-exports.createMoodLog = async (req, res) => {
-  const { mood, notes, sleepHours, energyLevel } = req.body;
-
+// User (patient) creates a mood log
+export const createMoodLog = async (req, res) => {
   if (req.user.role !== "user") {
     return res.status(403).json({ error: "Only users can create mood logs." });
   }
+
+  const { mood, notes, sleepHours, energyLevel } = req.body;
 
   try {
     const newLog = new MoodLog({
@@ -23,16 +25,101 @@ exports.createMoodLog = async (req, res) => {
   }
 };
 
-exports.getPatientMoodLogs = async (req, res) => {
-  if (req.user.role !== "therapist") {
+// Therapist or Admin views mood logs of a specific patient
+export const getPatientMoodLogs = async (req, res) => {
+  const allowedRoles = ["therapist", "admin"];
+  if (!allowedRoles.includes(req.user.role)) {
     return res
       .status(403)
-      .json({ error: "Only therapists can view patient mood logs." });
+      .json({ error: "Only therapists or admins can view patient mood logs." });
   }
 
   try {
     const patientId = req.params.patientId;
-    const logs = await MoodLog.find({ userId: patientId }).sort({ date: -1 });
+
+    const logs = await MoodLog.find({ userId: patientId })
+      .populate("userId", "username email therapistId") // populate patient info
+      .sort({ createdAt: -1 });
+
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// User views their own mood logs
+export const getMyMoodLogs = async (req, res) => {
+  if (req.user.role !== "user") {
+    return res.status(403).json({ error: "Access denied." });
+  }
+
+  try {
+    const logs = await MoodLog.find({ userId: req.user.id }).sort({
+      createdAt: -1,
+    });
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Delete a mood log (only by therapist or admin)
+export const deleteMoodLog = async (req, res) => {
+  const logId = req.params.id;
+
+  const allowedRoles = ["therapist", "admin"];
+  if (!allowedRoles.includes(req.user.role)) {
+    return res
+      .status(403)
+      .json({ error: "Only therapists or admins can delete mood logs." });
+  }
+
+  try {
+    const log = await MoodLog.findById(logId);
+    if (!log) {
+      return res.status(404).json({ error: "Mood log not found." });
+    }
+
+    await MoodLog.findByIdAndDelete(logId);
+    res.json({ message: "Mood log deleted successfully." });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Admin gets all mood logs from all users (with user populated)
+export const getAllMoodLogs = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ error: "Only admins can access all mood logs." });
+  }
+
+  try {
+    const logs = await MoodLog.find()
+      .populate("userId", "username email therapistId") // include user info
+      .sort({ createdAt: -1 });
+
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ Therapist sees mood logs only from *their* assigned patients
+export const getTherapistClientsMoodLogs = async (req, res) => {
+  if (req.user.role !== "therapist") {
+    return res.status(403).json({ error: "Access denied" });
+  }
+
+  try {
+    const users = await User.find({ therapistId: req.user.id }).select("_id");
+    const userIds = users.map((u) => u._id);
+
+    const logs = await MoodLog.find({ userId: { $in: userIds } })
+      .populate("userId", "username email therapistId")
+      .sort({ createdAt: -1 });
+
     res.json(logs);
   } catch (err) {
     res.status(500).json({ error: err.message });

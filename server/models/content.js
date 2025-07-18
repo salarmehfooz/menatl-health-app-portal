@@ -1,30 +1,20 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const contentSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+const contentSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    type: {
+      type: String,
+      enum: ["video", "article", "exercise"],
+      required: true,
+    },
+    url: { type: String },
+    tags: [String],
+    description: String,
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
-  type: {
-    type: String,
-    enum: ["video", "article", "exercise", "image", "blog"],
-    required: true,
-  },
-  url: {
-    type: String,
-    required: true,
-  },
-  tags: [String],
-  description: String,
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Content", contentSchema);
+const Content = mongoose.model("Content", contentSchema);
+export default Content;

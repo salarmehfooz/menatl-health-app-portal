@@ -1,21 +1,22 @@
-// routes/contentRoutes.js
-const express = require("express");
-const router = express.Router();
-const {
+import express from "express";
+import { protect, requireRole } from "../controllers/authController.js";
+import {
   createContent,
-  getAllContent,
   updateContent,
   deleteContent,
-} = require("../controllers/contentController.js");
+  getAllContent,
+} from "../controllers/contentController.js";
 
-const { protect, requireRole } = require("../controllers/authController.js");
+const router = express.Router();
 
-// Therapist-only routes
 router.post("/", protect, requireRole("therapist"), createContent);
 router.put("/:id", protect, requireRole("therapist"), updateContent);
-router.delete("/:id", protect, requireRole("therapist"), deleteContent);
-
-// Accessible to both users and therapists
+router.delete(
+  "/:id",
+  protect,
+  requireRole("therapist", "admin"),
+  deleteContent
+);
 router.get("/", protect, getAllContent);
 
-module.exports = router;
+export default router;
