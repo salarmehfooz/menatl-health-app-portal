@@ -1,183 +1,74 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import UserDashboard from "./pages/user/UserDashboard";
-import TherapistDashboard from "./pages/therapist/TherapistDashboard";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import AppointmentBooking from "./pages/AppointmentBooking";
-import UserAppointments from "./pages/UserAppointments";
 import TherapistAppointments from "./pages/TherapistAppointments";
-import ChatInterface from "./pages/ChatInterface";
-import StartNewChat from "./pages/StartNewChat";
-import MoodLog from "./pages/MoodLog";
+import UserAppointments from "./pages/UserAppointments";
+import MoodLogs from "./pages/MoodLog";
 import MoodLogForm from "./pages/MoodLogForm";
 import ContentLibrary from "./pages/ContentLibrary";
-import AdminUserManagement from "./pages/admin/AdminUserManagement";
+import ChatInterface from "./pages/ChatInterface";
 import AdminContentManagement from "./pages/admin/AdminContentManagement";
 import AdminAppointmentsMonitor from "./pages/admin/AdminAppointmentsMonitor";
 import AdminMoodLogsReview from "./pages/admin/AdminMoodLogsReview";
-
+import AdminUserManagement from "./pages/admin/AdminUserManagement";
+import TherapistContentManagement from "./pages/therapist/TherapistContentManagement";
+import TherapistMoodLogsReview from "./pages/therapist/TherapistMoodLogsReview";
+import TherapistList from "./pages/user/TherapistList";
+import StartNewChat from "./pages/StartNewChat";
+import TherapistChatThreads from "./pages/therapist/TherapistChatThreads";
+import UserChatThreads from "./pages/user/UserChatThreads";
+import TherapistAssignmentsPage from "./pages/admin/TherapistAssignmentsPage";
+import TherapistAssignmentForm from "./pages/admin/TherapistAssignmentForm";
+import TherapistPrescriptionPage from "./pages/therapist/TherapistPrescriptionPage";
+import UserPrescriptionPage from "./pages/user/UserPrescriptionPage";
+import ContentDetail from "./pages/ContentDetail";
+import TherapistDashboard from "./pages/therapist/TherapistDashboard";
+import UserDashboard from "./pages/user/UserDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <>
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/appointments/book" element={<AppointmentBooking />} />
+        <Route path="/therapist-list" element={<TherapistList />} />
+        <Route path="/start-chat/:therapistId" element={<StartNewChat />} />
+        <Route path="/therapist/appointments" element={<TherapistAppointments />} />
+        <Route path="/therapist/content" element={<TherapistContentManagement />} />
+        <Route path="/content/:id" element={<ContentDetail />} />
+        <Route path="/therapist/moodlogview" element={<TherapistMoodLogsReview />} />
+        <Route path="/therapist/chat-threads" element={<TherapistChatThreads />} />
+        <Route path="/therapist-assignments" element={<TherapistAssignmentsPage />} />
+        <Route path="/therapist/prescription-assign" element={<TherapistPrescriptionPage />} />
+        <Route path="/assignment-form" element={<TherapistAssignmentForm />} />
+        <Route path="/therapist/dashboard" element={<TherapistDashboard />} />
+        <Route path="/user/dashboard" element={<UserDashboard />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/user/appointments" element={<UserAppointments />} />
+        <Route path="/user/chat-threads" element={<UserChatThreads />} />
+        <Route path="/user-prescription" element={<UserPrescriptionPage />} />
 
-          <Route
-            path="/user/dashboard"
-            element={
-              <ProtectedRoute>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/mood-logs" element={<MoodLogs />} />
+        <Route path="mood-log/new" element={<MoodLogForm />} />
+        <Route path="/content-library" element={<ContentLibrary />} />
+        <Route path="/chat/:threadId" element={<ChatInterface />} />
 
-          <Route
-            path="/therapist/dashboard"
-            element={
-              <ProtectedRoute>
-                <TherapistDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/appointments/book"
-            element={
-              <ProtectedRoute>
-                <AppointmentBooking />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/appointments/user"
-            element={
-              <ProtectedRoute>
-                <UserAppointments />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/appointments/therapist"
-            element={
-              <ProtectedRoute>
-                <TherapistAppointments />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/chat"
-            element={
-              <ProtectedRoute>
-                <ChatInterface />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/chat/new"
-            element={
-              <ProtectedRoute>
-                <StartNewChat />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/mood-log"
-            element={
-              <ProtectedRoute>
-                <MoodLog />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/mood-log/new"
-            element={
-              <ProtectedRoute>
-                <MoodLogForm />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/content-library"
-            element={
-              <ProtectedRoute>
-                <ContentLibrary />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/users"
-            element={
-              <ProtectedRoute>
-                <AdminUserManagement />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/content"
-            element={
-              <ProtectedRoute>
-                <AdminContentManagement />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/appointments"
-            element={
-              <ProtectedRoute>
-                <AdminAppointmentsMonitor />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/mood-logs"
-            element={
-              <ProtectedRoute>
-                <AdminMoodLogsReview />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </main>
-    </div>
+        {/* Admin Routes */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/content" element={<AdminContentManagement />} />
+        <Route path="/admin/appointments" element={<AdminAppointmentsMonitor />} />
+        <Route path="/admin/moodlogs" element={<AdminMoodLogsReview />} />
+        <Route path="/admin/users" element={<AdminUserManagement />} />
+      </Routes>
+    </>
   );
 }
 

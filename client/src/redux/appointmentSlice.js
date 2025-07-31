@@ -8,29 +8,44 @@ import {
 } from "../api/appointmentAPI";
 
 // Book appointment (User)
-export const bookAppointment = createAsyncThunk("appointments/book", async (appointmentData) => {
-  return await bookUserAppointment(appointmentData);
-});
+export const bookAppointment = createAsyncThunk(
+  "appointments/book",
+  async (appointmentData) => {
+    return await bookUserAppointment(appointmentData);
+  }
+);
 
 // Get appointments for User
-export const getUserAppointments = createAsyncThunk("appointments/user", async (userId) => {
-  return await fetchUserAppointments(userId);
-});
+export const getUserAppointments = createAsyncThunk(
+  "appointments/user",
+  async (userId) => {
+    return await fetchUserAppointments(userId);
+  }
+);
 
 // Get appointments for Therapist
-export const getTherapistAppointments = createAsyncThunk("appointments/therapist", async (therapistId) => {
-  return await fetchTherapistAppointments(therapistId);
-});
+export const getTherapistAppointments = createAsyncThunk(
+  "appointments/therapist",
+  async () => {
+    return await fetchTherapistAppointments(); // no args needed
+  }
+);
 
 // Therapist/Admin updates an appointment
-export const updateAppointment = createAsyncThunk("appointments/update", async ({ id, updatedData }) => {
-  return await updateTherapistAppointment(id, updatedData);
-});
+export const updateAppointment = createAsyncThunk(
+  "appointments/update",
+  async ({ id, updatedData }) => {
+    return await updateTherapistAppointment(id, updatedData);
+  }
+);
 
 // ✅ Admin fetches all appointments
-export const getAllAppointmentsAdmin = createAsyncThunk("appointments/admin", async () => {
-  return await fetchAllAppointmentsAdmin();
-});
+export const getAllAppointmentsAdmin = createAsyncThunk(
+  "appointments/admin",
+  async () => {
+    return await fetchAllAppointmentsAdmin();
+  }
+);
 
 const appointmentSlice = createSlice({
   name: "appointments",
@@ -56,7 +71,9 @@ const appointmentSlice = createSlice({
         state.list = action.payload;
       })
       .addCase(updateAppointment.fulfilled, (state, action) => {
-        const idx = state.list.findIndex((a) => a._id === action.payload.updated._id);
+        const idx = state.list.findIndex(
+          (a) => a._id === action.payload.updated._id
+        );
         if (idx !== -1) state.list[idx] = action.payload.updated;
       })
       // ✅ Admin handler

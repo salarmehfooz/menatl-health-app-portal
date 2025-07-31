@@ -30,9 +30,9 @@ export const fetchUserAppointments = async (userId) => {
 };
 
 // Fetch appointments for a specific therapist
-export const fetchTherapistAppointments = async (userId) => {
+export const fetchTherapistAppointments = async () => {
   const token = localStorage.getItem("token");
-  const res = await fetch(`${BASE_URL}/therapist/${userId}`, {
+  const res = await fetch("http://localhost:5000/api/appointments/therapist", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

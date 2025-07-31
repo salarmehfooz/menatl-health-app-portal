@@ -40,13 +40,24 @@ const contentSlice = createSlice({
     builder
       .addCase(addContent.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(addContent.fulfilled, (state, action) => {
         state.loading = false;
-        state.items.push(action.payload.content);
+        // Assuming API returns the full created content as action.payload
+        state.items.push(action.payload);
+      })
+      .addCase(fetchContent.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchContent.fulfilled, (state, action) => {
+        state.loading = false;
         state.items = action.payload;
+      })
+      .addCase(fetchContent.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       })
       .addCase(editContent.fulfilled, (state, action) => {
         const index = state.items.findIndex(

@@ -17,6 +17,7 @@ export const loginUser = async (credentials) => {
 
   // ✅ Save token to localStorage
   localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user));
 
   return data;
 };
@@ -38,6 +39,7 @@ export const registerUser = async (userData) => {
 
   // ✅ Save token
   localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user));
 
   return data;
 };

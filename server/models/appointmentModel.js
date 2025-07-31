@@ -15,10 +15,15 @@ const appointmentSchema = new mongoose.Schema(
     datetime: { type: Date, required: true },
     status: {
       type: String,
-      enum: ["scheduled", "completed", "cancelled"],
+      enum: ["scheduled", "rescheduled", "completed", "cancelled"],
       default: "scheduled",
     },
     notes: { type: String },
+
+    // 🔽 New fields for reschedule tracking
+    wasRescheduled: { type: Boolean, default: false },
+    rescheduledAt: { type: Date },
+    rescheduleReason: { type: String },
   },
   { timestamps: true }
 );

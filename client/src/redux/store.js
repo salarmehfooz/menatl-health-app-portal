@@ -5,7 +5,10 @@ import contentReducer from "./contentSlice";
 import appointmentReducer from "./appointmentSlice";
 import chatReducer from "./chatSlice";
 import userReducer from "./userSlice";
-import adminReducer from "./adminSlice"; // ✅ Add this
+import adminReducer from "./adminSlice";
+import assignmentReducer from "./assignmentSlice";
+import prescriptionReducer from "./prescriptionSlice";
+import notificationReducer from "./notificationSlice";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +18,10 @@ const store = configureStore({
     appointments: appointmentReducer,
     chat: chatReducer,
     users: userReducer,
-    admin: adminReducer, // ✅ Register it here
+    admin: adminReducer,
+    assignments: assignmentReducer,
+    prescriptions: prescriptionReducer,
+    notifications: notificationReducer,
   },
 });
 

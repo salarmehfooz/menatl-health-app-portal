@@ -1,11 +1,11 @@
 const BASE_URL = "http://localhost:5000/api/content";
 
-export const createContent = async (data, token) => {
+export const createContent = async (data) => {
   const res = await fetch(`${BASE_URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     body: JSON.stringify(data),
   });
@@ -13,20 +13,26 @@ export const createContent = async (data, token) => {
   return res.json();
 };
 
-export const fetchAllContent = async (token) => {
-  const res = await fetch(`${BASE_URL}`, {
-    headers: { Authorization: `Bearer ${token}` },
+export const fetchAllContent = async () => {
+  const response = await fetch("http://localhost:5000/api/content", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
   });
-  if (!res.ok) throw new Error("Failed to fetch content");
-  return res.json();
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch content: " + response.statusText);
+  }
+
+  return await response.json();
 };
 
-export const updateContent = async (id, data, token) => {
+export const updateContent = async (id, data) => {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
     body: JSON.stringify(data),
   });
@@ -34,10 +40,10 @@ export const updateContent = async (id, data, token) => {
   return res.json();
 };
 
-export const deleteContent = async (id, token) => {
+export const deleteContent = async (id) => {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   if (!res.ok) throw new Error("Failed to delete content");
   return res.json();

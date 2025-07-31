@@ -1,6 +1,7 @@
+import mongoose from "mongoose";
 import MoodLog from "../models/moodLog.js";
 import User from "../models/user.js";
-
+import Assignment from "../models/assignmentModel.js";
 // User (patient) creates a mood log
 export const createMoodLog = async (req, res) => {
   if (req.user.role !== "user") {
@@ -29,9 +30,7 @@ export const createMoodLog = async (req, res) => {
 export const getPatientMoodLogs = async (req, res) => {
   const allowedRoles = ["therapist", "admin"];
   if (!allowedRoles.includes(req.user.role)) {
-    return res
-      .status(403)
-      .json({ error: "Only therapists or admins can view patient mood logs." });
+    return res.status(403).json({ error: "Only therapists or admins can view patient mood logs." });
   }
 
   try {
@@ -69,9 +68,7 @@ export const deleteMoodLog = async (req, res) => {
 
   const allowedRoles = ["therapist", "admin"];
   if (!allowedRoles.includes(req.user.role)) {
-    return res
-      .status(403)
-      .json({ error: "Only therapists or admins can delete mood logs." });
+    return res.status(403).json({ error: "Only therapists or admins can delete mood logs." });
   }
 
   try {
@@ -90,9 +87,7 @@ export const deleteMoodLog = async (req, res) => {
 // Admin gets all mood logs from all users (with user populated)
 export const getAllMoodLogs = async (req, res) => {
   if (req.user.role !== "admin") {
-    return res
-      .status(403)
-      .json({ error: "Only admins can access all mood logs." });
+    return res.status(403).json({ error: "Only admins can access all mood logs." });
   }
 
   try {
@@ -107,21 +102,33 @@ export const getAllMoodLogs = async (req, res) => {
 };
 
 // ✅ Therapist sees mood logs only from *their* assigned patients
+
 export const getTherapistClientsMoodLogs = async (req, res) => {
   if (req.user.role !== "therapist") {
     return res.status(403).json({ error: "Access denied" });
   }
 
   try {
-    const users = await User.find({ therapistId: req.user.id }).select("_id");
-    const userIds = users.map((u) => u._id);
+    const therapistId = req.user.id;
 
+    // ✅ Step 1: Get assigned user IDs from Assignment model
+    const assignment = await Assignment.findOne({ therapistId });
+
+    if (!assignment || !assignment.assignedUsers.length) {
+      return res.status(404).json({ error: "No assigned clients found" });
+    }
+
+    const userIds = assignment.assignedUsers;
+
+    // ✅ Step 2: Fetch mood logs for those assigned users
     const logs = await MoodLog.find({ userId: { $in: userIds } })
       .populate("userId", "username email therapistId")
       .sort({ createdAt: -1 });
 
-    res.json(logs);
+    console.log(`Fetched ${logs.length} mood log(s) for assigned clients.`);
+    return res.json(logs);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error fetching therapist clients' mood logs:", err);
+    return res.status(500).json({ error: "Server error: " + err.message });
   }
 };

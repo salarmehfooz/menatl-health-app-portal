@@ -68,7 +68,7 @@ export const updateUser = async (req, res) => {
 export const getAllTherapists = async (req, res) => {
   try {
     const therapists = await User.find({ role: "therapist" }).select(
-      "_id username email"
+      "_id username email gender"
     );
     res.status(200).json(therapists);
   } catch (err) {

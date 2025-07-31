@@ -9,6 +9,9 @@ import moodLogRoutes from "./routes/moodLogRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import contentRoutes from "./routes/contentRoute.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import assignmentRoutes from "./routes/assignmentRoutes.js";
+import prescriptionRoutes from "./routes/prescriptionRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +36,9 @@ app.use("/api/moodlogs", moodLogRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/assignment", assignmentRoutes);
+app.use("/api/prescriptions", prescriptionRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Root
 app.get("/", (req, res) => {

@@ -1,7 +1,7 @@
 import ChatThread from "../models/ChatThread.js";
 import ChatMessage from "../models/chatMessage.js";
 import User from "../models/user.js";
-
+import { createNotification } from "./notificationController.js";
 // ✅ Send a message (new thread or existing)
 export const sendMessage = async (req, res) => {
   try {
@@ -61,6 +61,22 @@ export const sendMessage = async (req, res) => {
       sender: req.user.role,
       message,
     });
+
+    // Notify the recipient about the new message
+    const recipientUserId =
+      req.user.role === "user" ? thread.therapistId : thread.userId;
+
+    try {
+      await createNotification({
+        recipientId: recipientUserId,
+        type: "new_message",
+        message: `New message from ${req.user.role}`,
+        meta: { threadId: thread._id, senderId },
+      });
+    } catch (notifyErr) {
+      console.error("Notification creation failed:", notifyErr);
+      // Continue without failing the request
+    }
 
     res.status(201).json({
       message: "Message sent",

@@ -31,7 +31,7 @@ const adminSlice = createSlice({
         state.users = action.payload;
       })
       .addCase(deleteUserThunk.fulfilled, (state, action) => {
-        state.users = state.users.filter((u) => u._id !== action.payload._id);
+        state.users = state.users.filter((u) => u.id !== action.payload.id);
       })
 
       // Content
@@ -39,7 +39,7 @@ const adminSlice = createSlice({
         state.content = action.payload;
       })
       .addCase(deleteContentThunk.fulfilled, (state, action) => {
-        state.content = state.content.filter((c) => c._id !== action.payload._id);
+        state.content = state.content.filter((c) => c.id !== action.payload.id);
       })
 
       // Appointments
@@ -52,7 +52,7 @@ const adminSlice = createSlice({
         state.moodLogs = action.payload;
       })
       .addCase(deleteMoodLogThunk.fulfilled, (state, action) => {
-        state.moodLogs = state.moodLogs.filter((m) => m._id !== action.payload._id);
+        state.moodLogs = state.moodLogs.filter((m) => m.id !== action.payload.id);
       })
 
       // Therapists

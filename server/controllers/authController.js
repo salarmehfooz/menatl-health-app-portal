@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { createBulkNotifications } from "./notificationController.js";
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
@@ -24,6 +25,17 @@ const register = async (req, res) => {
       gender,
       emergencyContact,
     });
+
+    // Notify all admins about the new user registration
+    const admins = await User.find({ role: "admin" });
+    const notifications = admins.map((admin) => ({
+      recipientId: admin._id,
+      type: "user_registered",
+      message: `New user registered: ${username}`,
+      meta: { userId: user._id },
+    }));
+
+    await createBulkNotifications(notifications);
 
     const token = generateToken(user);
     res.status(201).json({
