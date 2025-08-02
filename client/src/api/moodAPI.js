@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api/moodlogs";
+const API_BASE = "https://mental-health-app-portal.onrender.com/api/moodlogs";
 
 // Submit a mood log (user)
 export const submitMoodLog = async (moodData) => {

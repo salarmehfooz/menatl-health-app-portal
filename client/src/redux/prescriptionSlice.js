@@ -16,7 +16,7 @@ export const fetchPrescriptions = createAsyncThunk(
   "prescriptions/fetch",
   async (userId) => {
     const res = await fetch(
-      `http://localhost:5000/api/prescriptions/${userId}`,
+      `https://mental-health-app-portal.onrender.com/api/prescriptions/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -36,14 +36,17 @@ export const fetchPrescriptions = createAsyncThunk(
 export const createPrescription = createAsyncThunk(
   "prescriptions/create",
   async (data) => {
-    const res = await fetch(`http://localhost:5000/api/prescriptions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(data),
-    });
+    const res = await fetch(
+      `https://mental-health-app-portal.onrender.com/api/prescriptions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
 
     if (!res.ok) {
       throw new Error(await parseError(res, "Failed to create prescription"));
@@ -58,7 +61,7 @@ export const updatePrescription = createAsyncThunk(
   "prescriptions/update",
   async (prescription) => {
     const res = await fetch(
-      `http://localhost:5000/api/prescriptions/${prescription._id}`,
+      `https://mental-health-app-portal.onrender.com/api/prescriptions/${prescription._id}`,
       {
         method: "PUT",
         headers: {

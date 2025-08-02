@@ -15,9 +15,12 @@ export const fetchAssignments = createAsyncThunk(
   "assignments/fetchAll",
   async (_, thunkAPI) => {
     try {
-      const res = await fetch("http://localhost:5000/api/assignment", {
-        headers: getAuthHeaders(),
-      });
+      const res = await fetch(
+        "https://mental-health-app-portal.onrender.com/api/assignment",
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Failed to fetch assignments");
@@ -34,11 +37,14 @@ export const assignUsers = createAsyncThunk(
   "assignments/assignUsers",
   async ({ therapistId, assignedUsers }, thunkAPI) => {
     try {
-      const res = await fetch("http://localhost:5000/api/assignment/assign", {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ therapistId, assignedUsers }),
-      });
+      const res = await fetch(
+        "https://mental-health-app-portal.onrender.com/api/assignment/assign",
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ therapistId, assignedUsers }),
+        }
+      );
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Failed to assign users");
@@ -56,9 +62,12 @@ export const getAssignedUsersForTherapist = createAsyncThunk(
   "assignments/getAssignedUsersForTherapist",
   async (_, thunkAPI) => {
     try {
-      const res = await fetch("http://localhost:5000/api/assignment/my-users", {
-        headers: getAuthHeaders(),
-      });
+      const res = await fetch(
+        "https://mental-health-app-portal.onrender.com/api/assignment/my-users",
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Failed to fetch assigned users");
@@ -77,7 +86,7 @@ export const getAssignedTherapistForUser = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/assignment/my-therapist",
+        "https://mental-health-app-portal.onrender.com/api/assignment/my-therapist",
         {
           headers: getAuthHeaders(),
         }
@@ -100,7 +109,7 @@ export const removeUserFromTherapist = createAsyncThunk(
   async ({ therapistId, userId }, thunkAPI) => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/assignment/remove-user",
+        "https://mental-health-app-portal.onrender.com/api/assignment/remove-user",
         {
           method: "PUT",
           headers: getAuthHeaders(),

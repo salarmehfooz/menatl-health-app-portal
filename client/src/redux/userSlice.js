@@ -6,12 +6,15 @@ export const fetchUserProfile = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/users/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        "https://mental-health-app-portal.onrender.com/api/users/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to fetch user profile");
@@ -30,11 +33,14 @@ export const fetchTherapists = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/users/therapists", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "https://mental-health-app-portal.onrender.com/api/users/therapists",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to fetch therapists");

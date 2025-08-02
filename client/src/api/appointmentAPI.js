@@ -1,16 +1,20 @@
-const BASE_URL = "http://localhost:5000/api/appointments";
+const BASE_URL =
+  "https://mental-health-app-portal.onrender.com/api/appointments";
 
 // Book an appointment (user)
 export const bookUserAppointment = async (data) => {
   const token = localStorage.getItem("token");
-  const res = await fetch("http://localhost:5000/api/appointments", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
+  const res = await fetch(
+    "https://mental-health-app-portal.onrender.com/api/appointments",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
 
   if (!res.ok) throw new Error("Failed to book appointment");
   return await res.json();
@@ -32,11 +36,14 @@ export const fetchUserAppointments = async (userId) => {
 // Fetch appointments for a specific therapist
 export const fetchTherapistAppointments = async () => {
   const token = localStorage.getItem("token");
-  const res = await fetch("http://localhost:5000/api/appointments/therapist", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await fetch(
+    "https://mental-health-app-portal.onrender.com/appointments/therapist",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   if (!res.ok) throw new Error("Failed to fetch therapist appointments");
   return await res.json();

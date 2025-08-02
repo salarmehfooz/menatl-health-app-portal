@@ -1,13 +1,16 @@
 // src/api/authAPI.js
 
 export const loginUser = async (credentials) => {
-  const res = await fetch("http://localhost:5000/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
+  const res = await fetch(
+    "https://mental-health-app-portal.onrender.com/api/auth/login",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Invalid login credentials");
@@ -23,13 +26,16 @@ export const loginUser = async (credentials) => {
 };
 
 export const registerUser = async (userData) => {
-  const res = await fetch("http://localhost:5000/api/auth/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userData),
-  });
+  const res = await fetch(
+    "https://mental-health-app-portal.onrender.com/api/auth/register",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Registration failed");
@@ -47,12 +53,15 @@ export const registerUser = async (userData) => {
 export const fetchUserProfile = async (userId) => {
   const token = localStorage.getItem("token");
 
-  const res = await fetch(`http://localhost:5000/api/users/me/${userId}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await fetch(
+    `https://mental-health-app-portal.onrender.com/api/users/me/${userId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch user profile");

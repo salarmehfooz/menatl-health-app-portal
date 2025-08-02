@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/content";
+const BASE_URL = "https://mental-health-app-portal.onrender.com/api/content";
 
 export const createContent = async (data) => {
   const res = await fetch(`${BASE_URL}`, {
@@ -14,11 +14,14 @@ export const createContent = async (data) => {
 };
 
 export const fetchAllContent = async () => {
-  const response = await fetch("http://localhost:5000/api/content", {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  const response = await fetch(
+    "https://mental-health-app-portal.onrender.com/api/content",
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch content: " + response.statusText);

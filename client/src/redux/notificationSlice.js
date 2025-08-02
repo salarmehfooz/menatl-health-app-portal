@@ -8,7 +8,7 @@ export const fetchNotifications = createAsyncThunk(
       const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
       const response = await fetch(
-        `http://localhost:5000/api/notifications/${userId}`,
+        `https://mental-health-app-portal.onrender.com/api/notifications/${userId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export const clearNotificationsOnServer = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/notifications/clear`,
+        `https://mental-health-app-portal.onrender.com/api/notifications/clear`,
         {
           method: "DELETE",
           headers: {
@@ -62,7 +62,7 @@ export const markNotificationAsReadOnServer = createAsyncThunk(
   async (notificationId, thunkAPI) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/notifications/${notificationId}/read`,
+        `https://mental-health-app-portal.onrender.com/api/notifications/${notificationId}/read`,
         {
           method: "PATCH",
           headers: {
