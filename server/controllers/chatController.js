@@ -1,5 +1,5 @@
 import ChatThread from "../models/ChatThread.js";
-import ChatMessage from "../models/chatMessage.js";
+import ChatMessage from "../models/ChatMessage.js";
 import User from "../models/user.js";
 import { createNotification } from "./notificationController.js";
 // ✅ Send a message (new thread or existing)
