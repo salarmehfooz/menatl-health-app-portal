@@ -37,7 +37,7 @@ export const fetchUserAppointments = async (userId) => {
 export const fetchTherapistAppointments = async () => {
   const token = localStorage.getItem("token");
   const res = await fetch(
-    "https://mental-health-app-portal.onrender.com/appointments/therapist",
+    "https://mental-health-app-portal.onrender.com/api/appointments/therapist",
     {
       headers: {
         Authorization: `Bearer ${token}`,
