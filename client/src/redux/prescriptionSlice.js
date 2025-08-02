@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Helper function to parse error safely
+// Helper to safely parse errors
 const parseError = async (res, fallback = "Request failed") => {
   let text = await res.text();
   try {
@@ -11,7 +11,7 @@ const parseError = async (res, fallback = "Request failed") => {
   }
 };
 
-// Fetch prescriptions by userId
+// Async thunk: Fetch prescriptions by userId
 export const fetchPrescriptions = createAsyncThunk(
   "prescriptions/fetch",
   async (userId) => {
@@ -32,7 +32,7 @@ export const fetchPrescriptions = createAsyncThunk(
   }
 );
 
-// Create a new prescription
+// Async thunk: Create a new prescription
 export const createPrescription = createAsyncThunk(
   "prescriptions/create",
   async (data) => {
@@ -53,7 +53,7 @@ export const createPrescription = createAsyncThunk(
   }
 );
 
-// Update prescription
+// Async thunk: Update an existing prescription
 export const updatePrescription = createAsyncThunk(
   "prescriptions/update",
   async (prescription) => {
@@ -77,44 +77,61 @@ export const updatePrescription = createAsyncThunk(
   }
 );
 
+// Slice definition
 const prescriptionSlice = createSlice({
   name: "prescriptions",
   initialState: {
-    list: [],
+    byUser: {}, // Stores prescriptions keyed by userId
     loading: false,
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // FETCH
       .addCase(fetchPrescriptions.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchPrescriptions.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload;
+        const userId = action.meta.arg;
+        state.byUser[userId] = action.payload;
       })
       .addCase(fetchPrescriptions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
 
+      // CREATE
       .addCase(createPrescription.pending, (state) => {
         state.error = null;
       })
       .addCase(createPrescription.fulfilled, (state, action) => {
-        state.list.unshift(action.payload);
+        const newPrescription = action.payload;
+        const userId = newPrescription.userId;
+
+        if (!state.byUser[userId]) {
+          state.byUser[userId] = [];
+        }
+
+        state.byUser[userId].unshift(newPrescription);
       })
       .addCase(createPrescription.rejected, (state, action) => {
         state.error = action.error.message;
       })
 
+      // UPDATE
       .addCase(updatePrescription.fulfilled, (state, action) => {
         const updated = action.payload;
-        const index = state.list.findIndex((p) => p._id === updated._id);
-        if (index !== -1) {
-          state.list[index] = updated;
+        const userId = updated.userId;
+
+        const index = state.byUser[userId]?.findIndex(
+          (p) => p._id === updated._id
+        );
+
+        if (index !== undefined && index !== -1) {
+          state.byUser[userId][index] = updated;
         }
       })
       .addCase(updatePrescription.rejected, (state, action) => {

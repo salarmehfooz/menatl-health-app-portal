@@ -5,17 +5,18 @@ import { fetchPrescriptions } from "../../redux/prescriptionSlice";
 const UserPrescriptionPage = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const {
-    list: prescriptions,
-    loading,
-    error,
-  } = useSelector((state) => state.prescriptions);
+
+  const { byUser, loading, error } = useSelector(
+    (state) => state.prescriptions
+  );
+
+  const prescriptions = user?.id ? byUser[user.id] || [] : [];
 
   useEffect(() => {
-    if (user?._id) {
-      dispatch(fetchPrescriptions(user._id));
+    if (user?.id) {
+      dispatch(fetchPrescriptions(user.id));
     }
-  }, [dispatch, user?._id]);
+  }, [dispatch, user?.id]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -27,13 +28,13 @@ const UserPrescriptionPage = () => {
         <p className="text-gray-500">Loading...</p>
       ) : error ? (
         <p className="text-red-500">Error: {error}</p>
-      ) : prescriptions && prescriptions.length === 0 ? (
-        <p className="text-gray-500">No active prescriptions found.</p>
+      ) : prescriptions.length === 0 ? (
+        <p className="text-gray-500">No prescriptions found.</p>
       ) : (
         <ul className="space-y-6">
           {prescriptions.map((prescription) => (
             <li
-              key={prescription._id}
+              key={prescription.id}
               className="p-6 bg-white rounded-xl shadow border border-gray-200"
             >
               <p className="text-gray-700 mb-2">

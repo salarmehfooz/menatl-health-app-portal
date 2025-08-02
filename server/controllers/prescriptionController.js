@@ -58,16 +58,29 @@ export const getPrescriptionsByPatient = async (req, res) => {
   try {
     const user = req.user;
 
+    if (!user || !req.params.userId) {
+      return res.status(400).json({ message: "Invalid request." });
+    }
+
+    // Prevent regular users from accessing prescriptions of other users
+    if (user.role === "user" && user.id.toString() !== req.params.userId) {
+      return res.status(403).json({ message: "Access denied." });
+    }
+
     const query = { userId: req.params.userId };
+
+    // Only return active prescriptions to regular users
     if (user.role === "user") {
-      query.isActive = true; // filter only active for regular users
+      query.isActive = true;
     }
 
     const prescriptions = await Prescription.find(query).sort({
       createdAt: -1,
     });
+
     res.status(200).json(prescriptions);
   } catch (error) {
+    console.error("Error fetching prescriptions:", error);
     res.status(500).json({ error: error.message });
   }
 };
