@@ -9,7 +9,7 @@ import adminReducer from "./adminSlice";
 import assignmentReducer from "./assignmentSlice";
 import prescriptionReducer from "./prescriptionSlice";
 import notificationReducer from "./notificationSlice";
-
+import chatBotReducer from "./chatBotSlice";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -22,6 +22,7 @@ const store = configureStore({
     assignments: assignmentReducer,
     prescriptions: prescriptionReducer,
     notifications: notificationReducer,
+    chatBot: chatBotReducer,
   },
 });
 

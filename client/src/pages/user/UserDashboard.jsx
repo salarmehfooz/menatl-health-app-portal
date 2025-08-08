@@ -1,3 +1,4 @@
+// src/pages/UserDashboard.jsx
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -14,33 +15,34 @@ import {
   FileText,
 } from "lucide-react";
 import AssignedTherapist from "../../components/AssignedTherapist";
-import { fetchUserMoodLogs } from "../../redux/moodLogSlice"; // added import
-import { getUserAppointments } from "../../redux/appointmentSlice"; // ✅ import added
+import { fetchUserMoodLogs } from "../../redux/moodLogSlice";
+import { getUserAppointments } from "../../redux/appointmentSlice";
+import ChatBot from "../../components/ChatBot"; // Import the Chatbot component
 
 const UserDashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { list: moodLogs, loading } = useSelector((state) => state.moodLogs); // updated selector
+  const { list: moodLogs, loading } = useSelector((state) => state.moodLogs);
   const { list: appointments, loading: appointmentsLoading } = useSelector(
     (state) => state.appointments
-  ); // ✅ new selector
+  );
 
   useEffect(() => {
     dispatch(fetchUserMoodLogs()); // fetch mood logs on mount
   }, [dispatch]);
 
   useEffect(() => {
-    if (user?._id) {
-      dispatch(getUserAppointments(user._id)); // ✅ fetch user appointments
+    if (user?.id) {
+      dispatch(getUserAppointments(user.id)); // fetch user appointments
     }
-  }, [dispatch, user?._id]);
+  }, [dispatch, user?.id]);
 
   // Get most recent 4 mood logs sorted by date descending
   const recentMoods = [...moodLogs]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 4);
 
-  // ✅ Upcoming Appointments (real data)
+  // Upcoming Appointments (real data)
   const upcomingAppointments = appointments
     .filter((appt) => new Date(appt.datetime) > new Date())
     .sort((a, b) => new Date(a.datetime) - new Date(b.datetime))
@@ -130,7 +132,6 @@ const UserDashboard = () => {
         return "bg-gray-100";
     }
   };
-  
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -278,7 +279,7 @@ const UserDashboard = () => {
               ) : upcomingAppointments.length > 0 ? (
                 upcomingAppointments.map((appointment) => (
                   <div
-                    key={appointment._id}
+                    key={appointment.id}
                     className="p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center mb-2">
@@ -350,6 +351,9 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Chatbot Component - positioned at the bottom right */}
+      <ChatBot />
     </div>
   );
 };
