@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
 
-const API_URL = "http://localhost:5000/api/chatbot";
+const API_URL = "https://mental-health-app-portal.onrender.com/api/chatbot";
 
 // Async Thunk
 export const sendMessageToAI = createAsyncThunk(
