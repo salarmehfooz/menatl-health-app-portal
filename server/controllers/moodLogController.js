@@ -30,7 +30,9 @@ export const createMoodLog = async (req, res) => {
 export const getPatientMoodLogs = async (req, res) => {
   const allowedRoles = ["therapist", "admin"];
   if (!allowedRoles.includes(req.user.role)) {
-    return res.status(403).json({ error: "Only therapists or admins can view patient mood logs." });
+    return res
+      .status(403)
+      .json({ error: "Only therapists or admins can view patient mood logs." });
   }
 
   try {
@@ -68,7 +70,9 @@ export const deleteMoodLog = async (req, res) => {
 
   const allowedRoles = ["therapist", "admin"];
   if (!allowedRoles.includes(req.user.role)) {
-    return res.status(403).json({ error: "Only therapists or admins can delete mood logs." });
+    return res
+      .status(403)
+      .json({ error: "Only therapists or admins can delete mood logs." });
   }
 
   try {
@@ -87,7 +91,9 @@ export const deleteMoodLog = async (req, res) => {
 // Admin gets all mood logs from all users (with user populated)
 export const getAllMoodLogs = async (req, res) => {
   if (req.user.role !== "admin") {
-    return res.status(403).json({ error: "Only admins can access all mood logs." });
+    return res
+      .status(403)
+      .json({ error: "Only admins can access all mood logs." });
   }
 
   try {
@@ -110,22 +116,24 @@ export const getTherapistClientsMoodLogs = async (req, res) => {
 
   try {
     const therapistId = req.user.id;
+    const patientId = req.params.patientId; // Ensure you're getting the patientId from the URL
 
     // ✅ Step 1: Get assigned user IDs from Assignment model
     const assignment = await Assignment.findOne({ therapistId });
 
-    if (!assignment || !assignment.assignedUsers.length) {
-      return res.status(404).json({ error: "No assigned clients found" });
+    if (!assignment || !assignment.assignedUsers.includes(patientId)) {
+      return res
+        .status(404)
+        .json({ error: "Patient not found or not assigned to this therapist" });
     }
 
-    const userIds = assignment.assignedUsers;
-
-    // ✅ Step 2: Fetch mood logs for those assigned users
-    const logs = await MoodLog.find({ userId: { $in: userIds } })
+    // ✅ Step 2: Fetch mood logs for the selected patient
+    const logs = await MoodLog.find({ userId: patientId })
       .populate("userId", "username email therapistId")
       .sort({ createdAt: -1 });
 
-    console.log(`Fetched ${logs.length} mood log(s) for assigned clients.`);
+    console.log(`Fetched ${logs.length} mood log(s) for selected patient.`);
+
     return res.json(logs);
   } catch (err) {
     console.error("Error fetching therapist clients' mood logs:", err);

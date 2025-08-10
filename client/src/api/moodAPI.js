@@ -40,8 +40,8 @@ export const getPatientMoodLogs = async (patientId) => {
 };
 
 // Get logs of all clients assigned to this therapist (therapist)
-export const getTherapistClientsMoodLogs = async () => {
-  const res = await fetch(`${API_BASE}/therapist-clients`, {
+export const getTherapistClientsMoodLogs = async (userId) => {
+  const res = await fetch(`${API_BASE}/therapist-clients/${userId}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },

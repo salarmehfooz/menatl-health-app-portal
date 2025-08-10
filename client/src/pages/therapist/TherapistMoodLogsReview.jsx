@@ -106,7 +106,7 @@ const TherapistMoodLogsReview = () => {
           >
             <option value="">-- Select a patient --</option>
             {assignedUsers.map((patient) => (
-              <option key={patient.id} value={patient.id}>
+              <option key={patient._id} value={patient._id}>
                 {patient.username || patient.email || "Unnamed"}
               </option>
             ))}

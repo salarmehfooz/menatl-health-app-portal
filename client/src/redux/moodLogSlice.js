@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { submitMoodLog, getMoodLogsByUser, getAllMoodLogs, getTherapistClientsMoodLogs, deleteMoodLogById } from "../api/moodAPI";
+import {
+  submitMoodLog,
+  getMoodLogsByUser,
+  getAllMoodLogs,
+  getTherapistClientsMoodLogs,
+  deleteMoodLogById,
+} from "../api/moodAPI";
 
 // Thunks
 export const addMoodLog = createAsyncThunk("moodLogs/add", async (moodData) => {
@@ -12,10 +18,13 @@ export const fetchUserMoodLogs = createAsyncThunk("moodLogs/user", async () => {
   return logs; // array of mood logs for the user
 });
 
-export const fetchTherapistClientMoodLogs = createAsyncThunk("moodLogs/therapistClients", async () => {
-  const logs = await getTherapistClientsMoodLogs();
-  return logs; // array of mood logs from assigned clients
-});
+export const fetchTherapistClientMoodLogs = createAsyncThunk(
+  "moodLogs/therapistClients",
+  async (userId) => {
+    const logs = await getTherapistClientsMoodLogs(userId);
+    return logs; // array of mood logs from assigned clients
+  }
+);
 
 export const fetchAllMoodLogs = createAsyncThunk("moodLogs/admin", async () => {
   const logs = await getAllMoodLogs();

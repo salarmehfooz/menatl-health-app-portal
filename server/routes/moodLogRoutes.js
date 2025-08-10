@@ -11,7 +11,7 @@ router.post("/", protect, requireRole("user"), createMoodLog);
 router.get("/me", protect, requireRole("user"), getMyMoodLogs);
 
 // 🟢 Therapist views logs of all their assigned clients
-router.get("/therapist-clients", protect, requireRole("therapist"), getTherapistClientsMoodLogs);
+router.get("/therapist-clients/:patientId", protect, requireRole("therapist"), getTherapistClientsMoodLogs);
 
 // 🟢 Therapist or Admin views a specific patient's mood logs
 router.get("/patient/:id", protect, requireRole("therapist", "admin"), getPatientMoodLogs);
