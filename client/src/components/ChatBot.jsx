@@ -14,23 +14,23 @@ const ChatBot = () => {
   const [inputMessage, setInputMessage] = useState("");
   const chatMessagesRef = useRef(null);
 
-  // Scroll to bottom on message change
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (chatMessagesRef.current) {
       chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // Set initial therapist prompt
+  // Set initial therapist greeting
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       dispatch(setInitialTherapistPrompt());
     }
   }, [isOpen, messages.length, dispatch]);
 
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = (e) => {
     e.preventDefault();
-    if (inputMessage.trim() === "") return;
+    if (!inputMessage.trim()) return;
 
     const newMessage = { sender: "user", text: inputMessage };
     dispatch(addMessage(newMessage));
@@ -45,10 +45,13 @@ const ChatBot = () => {
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      {/* Toggle Button */}
+      {/* Floating Toggle Button */}
       <button
         onClick={handleToggleChat}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-105"
+        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700
+          text-white font-bold py-3 px-4 rounded-full shadow-lg
+          focus:outline-none focus:ring-4 focus:ring-purple-300
+          transition-transform transform hover:scale-110"
         aria-label="Toggle Chatbot"
       >
         {isOpen ? (
@@ -78,20 +81,28 @@ const ChatBot = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6
+                 a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
             />
           </svg>
         )}
       </button>
 
-      {/* Chatbot Window */}
+      {/* Chat Window */}
       {isOpen && (
-        <div className="bg-white rounded-lg shadow-xl w-80 md:w-96 h-[400px] flex flex-col mt-4 border border-gray-200">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-t-lg flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Therapist Bot</h3>
+        <div className="bg-white rounded-2xl shadow-2xl w-80 md:w-96 h-[420px] flex flex-col mt-4 border border-gray-200 overflow-hidden">
+          {/* Header */}
+          <div
+            className="bg-gradient-to-r from-blue-600 to-purple-600
+            text-white px-4 py-3 flex justify-between items-center"
+          >
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              🧠 Therapist Bot
+            </h3>
             <button
               onClick={handleClearChat}
-              className="text-white text-sm px-2 py-1 rounded hover:bg-white hover:text-blue-600 transition-colors duration-200"
+              className="text-white text-sm px-3 py-1 rounded-md bg-white/20
+              hover:bg-white/30 transition-colors"
               aria-label="Clear Chat"
             >
               Clear
@@ -101,20 +112,21 @@ const ChatBot = () => {
           {/* Messages */}
           <div
             ref={chatMessagesRef}
-            className="flex-1 p-4 overflow-y-auto custom-scrollbar"
+            className="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-gray-50"
           >
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex mb-2 ${
+                className={`flex ${
                   msg.sender === "user" ? "justify-end" : "justify-start"
                 }`}
               >
                 <div
-                  className={`max-w-[75%] px-4 py-2 rounded-lg shadow-md ${
+                  className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm text-sm
+                  break-words transition-all ${
                     msg.sender === "user"
-                      ? "bg-blue-500 text-white rounded-br-none"
-                      : "bg-gray-200 text-gray-800 rounded-bl-none"
+                      ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-br-none"
+                      : "bg-white text-gray-800 rounded-bl-none border border-gray-200"
                   }`}
                 >
                   {msg.text}
@@ -123,9 +135,9 @@ const ChatBot = () => {
             ))}
 
             {status === "loading" && (
-              <div className="flex justify-start mb-2">
-                <div className="max-w-[75%] px-4 py-2 rounded-lg bg-gray-200 text-gray-800 rounded-bl-none animate-pulse">
-                  Typing...
+              <div className="flex justify-start">
+                <div className="px-4 py-2 rounded-2xl bg-white text-gray-800 border border-gray-200 animate-pulse">
+                  ⌛ Typing...
                 </div>
               </div>
             )}
@@ -134,23 +146,26 @@ const ChatBot = () => {
           {/* Input */}
           <form
             onSubmit={handleSendMessage}
-            className="p-4 border-t border-gray-200"
+            className="p-3 border-t border-gray-200 bg-white"
           >
-            <div className="flex">
+            <div className="flex items-center gap-2">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Type a message... "
+                className="flex-1 p-2.5 border border-gray-300 rounded-full
+                  focus:outline-none focus:ring-2 focus:ring-blue-400"
                 disabled={status === "loading"}
               />
               <button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+                className="bg-gradient-to-r from-blue-500 to-purple-500
+                  hover:from-blue-600 hover:to-purple-600 text-white p-2.5 rounded-full
+                  shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all"
                 disabled={status === "loading"}
               >
-                Send
+                🚀
               </button>
             </div>
           </form>
