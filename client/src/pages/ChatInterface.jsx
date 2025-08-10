@@ -76,7 +76,7 @@ const ChatInterface = () => {
               : currentThread?.userId?.username?.[0]?.toUpperCase() || "?"}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
               {user.role === "user"
                 ? `Dr. ${currentThread?.therapistId?.username || "Therapist"}`
                 : currentThread?.userId?.username || "Patient"}
