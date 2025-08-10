@@ -12,10 +12,18 @@ const TherapistMoodLogsReview = () => {
   const { user } = useSelector((state) => state.auth);
 
   // Assigned users state
-  const { assignedUsers, loading: loadingAssignments, error: errorAssignments } = useSelector((state) => state.assignments);
+  const {
+    assignedUsers,
+    loading: loadingAssignments,
+    error: errorAssignments,
+  } = useSelector((state) => state.assignments);
 
   // Mood logs state
-  const { list: moodLogs, loading, error } = useSelector((state) => state.moodLogs);
+  const {
+    list: moodLogs,
+    loading,
+    error,
+  } = useSelector((state) => state.moodLogs);
 
   useEffect(() => {
     if (user?.id) {
@@ -38,12 +46,18 @@ const TherapistMoodLogsReview = () => {
               <Heart className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Review Client Mood Logs</h1>
-              <p className="text-gray-600 mt-1">Please log in to view mood logs.</p>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Review Client Mood Logs
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Please log in to view mood logs.
+              </p>
             </div>
           </div>
         </div>
-        <div className="bg-yellow-50 text-yellow-700 rounded-lg p-4 text-center">Please log in to view mood logs.</div>
+        <div className="bg-yellow-50 text-yellow-700 rounded-lg p-4 text-center">
+          Please log in to view mood logs.
+        </div>
       </div>
     );
   }
@@ -57,22 +71,42 @@ const TherapistMoodLogsReview = () => {
             <Heart className="h-8 w-8 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Review Client Mood Logs</h1>
-            <p className="text-gray-600 mt-1">View mood logs for your assigned patients.</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Review Client Mood Logs
+            </h1>
+            <p className="text-gray-600 mt-1">
+              View mood logs for your assigned patients.
+            </p>
           </div>
         </div>
       </div>
 
       {/* Patient Selector */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Select Patient</h2>
-        {loadingAssignments && <div className="bg-blue-50 text-blue-700 rounded-lg p-4 text-center">Loading assigned patients...</div>}
-        {errorAssignments && <div className="bg-red-50 text-red-700 rounded-lg p-4 text-center">{errorAssignments}</div>}
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Select Patient
+        </h2>
+        {loadingAssignments && (
+          <div className="bg-blue-50 text-blue-700 rounded-lg p-4 text-center">
+            Loading assigned patients...
+          </div>
+        )}
+        {errorAssignments && (
+          <div className="bg-red-50 text-red-700 rounded-lg p-4 text-center">
+            {errorAssignments}
+          </div>
+        )}
         {!loadingAssignments && !errorAssignments && (
-          <select id="patientSelect" className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)} disabled={loadingAssignments}>
+          <select
+            id="patientSelect"
+            className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={selectedUserId}
+            onChange={(e) => setSelectedUserId(e.target.value)}
+            disabled={loadingAssignments}
+          >
             <option value="">-- Select a patient --</option>
             {assignedUsers.map((patient) => (
-              <option key={patient._id} value={patient._id}>
+              <option key={patient.id} value={patient.id}>
                 {patient.username || patient.email || "Unnamed"}
               </option>
             ))}
@@ -83,26 +117,53 @@ const TherapistMoodLogsReview = () => {
       {/* Mood Logs Table */}
       {selectedUserId && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Mood Logs for Selected Patient</h2>
-          {loading && <div className="bg-blue-50 text-blue-700 rounded-lg p-4 text-center">Loading mood logs...</div>}
-          {error && <div className="bg-red-50 text-red-700 rounded-lg p-4 text-center">{error}</div>}
-          {!loading && !error && moodLogs.length === 0 && <div className="bg-blue-50 text-blue-700 rounded-lg p-4 text-center">No mood logs found for this patient.</div>}
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Mood Logs for Selected Patient
+          </h2>
+          {loading && (
+            <div className="bg-blue-50 text-blue-700 rounded-lg p-4 text-center">
+              Loading mood logs...
+            </div>
+          )}
+          {error && (
+            <div className="bg-red-50 text-red-700 rounded-lg p-4 text-center">
+              {error}
+            </div>
+          )}
+          {!loading && !error && moodLogs.length === 0 && (
+            <div className="bg-blue-50 text-blue-700 rounded-lg p-4 text-center">
+              No mood logs found for this patient.
+            </div>
+          )}
           {!loading && !error && moodLogs.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="py-3 px-4 text-left text-gray-900 font-semibold">Mood</th>
-                    <th className="py-3 px-4 text-left text-gray-900 font-semibold">Note</th>
-                    <th className="py-3 px-4 text-left text-gray-900 font-semibold">Logged At</th>
+                    <th className="py-3 px-4 text-left text-gray-900 font-semibold">
+                      Mood
+                    </th>
+                    <th className="py-3 px-4 text-left text-gray-900 font-semibold">
+                      Note
+                    </th>
+                    <th className="py-3 px-4 text-left text-gray-900 font-semibold">
+                      Logged At
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {moodLogs.map((log) => (
-                    <tr key={log._id} className="border-b border-gray-200 hover:bg-gray-50">
+                    <tr
+                      key={log._id}
+                      className="border-b border-gray-200 hover:bg-gray-50"
+                    >
                       <td className="py-3 px-4 text-gray-900">{log.mood}</td>
-                      <td className="py-3 px-4 text-gray-600 text-sm">{log.notes?.trim() !== "" ? log.notes : "-"}</td>
-                      <td className="py-3 px-4 text-gray-900">{new Date(log.createdAt).toLocaleString()}</td>
+                      <td className="py-3 px-4 text-gray-600 text-sm">
+                        {log.notes?.trim() !== "" ? log.notes : "-"}
+                      </td>
+                      <td className="py-3 px-4 text-gray-900">
+                        {new Date(log.createdAt).toLocaleString()}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
